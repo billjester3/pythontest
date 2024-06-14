@@ -1,8 +1,8 @@
-import gamepad
+import cc4hpibot
 import time
 
 if __name__ == "__main__":
-    gamepad = gamepad.Gamepad('/dev/input/event0')
+    cc4hpibot = cc4hpibot.Gamepad('/dev/input/event0')
     while True:
-        print('X={}, Y={}, A={}'.format(gamepad.getX(), gamepad.getY(), gamepad.isAButtonPressed()))
+        print('X={}, Y={}, A={}'.format(cc4hpibot.getX(), cc4hpibot.getY(), cc4hpibot.isAButtonPressed()))
         time.sleep(1.0)
