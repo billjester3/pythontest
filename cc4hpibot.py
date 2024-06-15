@@ -1,4 +1,5 @@
 import evdev
+import gpiozero
 
 class Gamepad:
     XAXIS_ID = 0
@@ -40,6 +41,57 @@ class Gamepad:
     def isButtonPressed(self, button):
         keys = self.device.active_keys()
         return button in keys
+
+
+
+class Motor:
+    def __init__(self, pin):
+        self.servo = gpiozero.Servo(pin, pin_factory=gpiozero.pins.pigpio.PiGPIOFactory())
+
+    def setSpeed(self, val):
+        self.servo.value = val
+
+    def stopMotor(self):
+        self.servo.mid()
+
+
+class DriveTrain:
+    # use BCM pin numbers, not physical pin numbers, i.e. if plugged into GPIO4 input 4 for the pin!
+    def __init__(self, leftMotorPin, rightMotorPin):
+        self.leftMotor = Motor(leftMotorPin)
+        self.rightMotor = Motor(rightMotorPin)
+
+    def arcadeDrive(self, drive, rotate):
+        # constrain to (-1,1)
+        drive = max(-1.0, min(drive, 1.0))
+        rotate = max(-1.0, min(rotate, 1.0))
+
+        # code from https://xiaoxiae.github.io/Robotics-Simplified-Website/drivetrain-control/arcade-drive/
+        maximum = max(abs(drive), abs(rotate))
+        total = drive + rotate
+        difference = drive - rotate
+
+        leftSpeed = 0
+        rightSpeed = 0
+
+        # set speed according to the quadrant that the values are in
+        if drive >= 0:
+            if rotate >= 0:  # I quadrant
+                leftSpeed = maximum
+                rightSpeed = difference
+            else:            # II quadrant
+                leftSpeed = total
+                rightSpeed = maximum
+        else:
+            if rotate >= 0:  # IV quadrant
+                leftSpeed = total
+                rightSpeed = -maximum
+            else:            # III quadrant
+                leftSpeed = -maximum
+                rightSpeed = difference
+
+        self.leftMotor.setSpeed(leftSpeed)
+        self.rightMotor.setSpeed(rightSpeed)
 
 
 

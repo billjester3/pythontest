@@ -1,8 +1,13 @@
 import cc4hpibot
 import time
 
+LEFTPIN = 12
+RIGHTPIN = 18
+
 if __name__ == "__main__":
-    cc4hpibot = cc4hpibot.Gamepad('/dev/input/event0')
+    gamepad = cc4hpibot.Gamepad('/dev/input/event0')
+    drivetrain = cc4hpibot.DriveTrain(LEFTPIN, RIGHTPIN)
+
     while True:
-        print('X={}, Y={}, A={}'.format(cc4hpibot.getX(), cc4hpibot.getY(), cc4hpibot.isAButtonPressed()))
-        time.sleep(1.0)
+        drivetrain.arcadeDrive(gamepad.getX(), gamepad.getY())
+        time.sleep(0.02)
