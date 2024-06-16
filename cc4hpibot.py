@@ -51,7 +51,7 @@ class Motor:
     def setSpeed(self, val):
         self.servo.value = val
 
-    def stopMotor(self):
+    def stop(self):
         self.servo.mid()
 
 
